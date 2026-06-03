@@ -19,9 +19,14 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
+      build_date: ${{ steps.build_date.outputs.build_date }}
       should_build: ${{ steps.should_build.outputs.result }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set build date
+        id: build_date
+        run: echo "build_date=$(date -u +'%Y-%m-%dT%H:%M:%S%Z')" >> $GITHUB_OUTPUT
 
       - name: Determine version
         id: version
@@ -96,6 +101,8 @@ jobs:
           file: ${{ matrix.dockerfile }}
           platforms: ${{ matrix.platform }}
           push: true
+          no-cache: true
+          pull: true
           provenance: false
           sbom: false
           tags: |
@@ -104,7 +111,7 @@ jobs:
           build-args: |
             CODE_RELEASE=${{ needs.check.outputs.version }}
             VERSION=${{ needs.check.outputs.version }}
-            BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%S%Z')
+            BUILD_DATE=${{ needs.check.outputs.build_date }}
 
   manifest:
     needs: [check, build]

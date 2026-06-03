@@ -7,9 +7,12 @@ ARG CODE_RELEASE
 LABEL build_version="Charcoal version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="charcoal-io"
 
-# environment settings
+# environment settings
 ARG DEBIAN_FRONTEND="noninteractive"
 ENV HOME="/config"
+ENV LSIO_FIRST_PARTY=true
+
+SHELL ["/bin/bash", "-c"]
 
 RUN \
   echo "**** install runtime dependencies ****" && \
